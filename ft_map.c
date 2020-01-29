@@ -6,7 +6,7 @@
 /*   By: novan-ve <novan-ve@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/27 13:23:24 by novan-ve       #+#    #+#                */
-/*   Updated: 2020/01/27 17:37:19 by novan-ve      ########   odam.nl         */
+/*   Updated: 2020/01/29 15:52:58 by novan-ve      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,8 @@ int		ft_map_init3(t_parse *p, int x, int y, int i)
 		if (p->orient != 0 || y == 0 || y == p->map_y - 1)
 			ft_free_parse(p, "Multiple letters in map", y);
 		p->orient = a;
-		p->map[y][x] = p->line[i];
+		//p->map[y][x] = p->line[i];
+		p->map[y][x] = '0';
 		p->posx = x;
 		p->posy = y;
 		x++;
