@@ -6,7 +6,7 @@
 /*   By: novan-ve <novan-ve@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/27 10:21:59 by novan-ve       #+#    #+#                */
-/*   Updated: 2020/01/29 18:09:31 by novan-ve      ########   odam.nl         */
+/*   Updated: 2020/01/30 15:52:51 by novan-ve      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,23 @@ t_run	init_run(t_data *data)
 	return (run);
 }
 
+t_keys	init_keys()
+{
+	t_keys	keys;
+
+	keys.key_up = 0;
+	keys.key_down = 0;
+	keys.key_left = 0;
+	keys.key_right = 0;
+	return (keys);
+}
+
 int		main(int argc, char **argv)
 {
 	t_data	data;
 	t_parse	parse;
 	t_run	run;
+	t_keys	keys;
 
 	if (argc != 2)
 	{
@@ -51,6 +63,8 @@ int		main(int argc, char **argv)
 	ft_printf("Opening game ...\n");
 	run = init_run(&data);
 	data.run = &run;
+	keys = init_keys();
+	data.keys = &keys;
 	ft_run_game(&data);
 	return (0);
 }
