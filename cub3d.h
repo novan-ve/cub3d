@@ -6,22 +6,22 @@
 /*   By: novan-ve <novan-ve@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/27 10:13:45 by novan-ve       #+#    #+#                */
-/*   Updated: 2020/01/30 13:28:41 by novan-ve      ########   odam.nl         */
+/*   Updated: 2020/02/02 20:50:08 by anon          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CUB3D_H
 # define CUB3D_H
 
-# define KEY_ESC 53
-# define KEY_LEFT 123
-# define KEY_RIGHT 124
-# define KEY_DOWN 125
-# define KEY_UP 126
+# define KEY_ESC 0xff1b
+# define KEY_LEFT 0xff51
+# define KEY_RIGHT 0xff53
+# define KEY_DOWN 0xff54
+# define KEY_UP 0xff52
 
 # include "get_next_line/get_next_line.h"
 # include "printf/ft_printf.h"
-# include "mlx/mlx.h"
+# include "mlx.h"
 # include <fcntl.h>
 # include <stdlib.h>
 # include <stdio.h>
@@ -70,6 +70,8 @@ typedef struct		s_img
 	int				line_size;
 	int				endian;
 	char			*addr;
+	int				texWidth;
+	int				texHeight;
 }					t_img;
 
 typedef struct		s_keys
@@ -87,6 +89,11 @@ typedef struct		s_data
 	t_run			*run;
 	t_img			*img;
 	t_keys			*keys;
+	t_img			*n;
+	t_img			*s;
+	t_img			*w;
+	t_img			*e;
+	t_img			*sp;
 }					t_data;
 
 int					ft_exit(char *s);

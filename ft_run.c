@@ -6,11 +6,22 @@
 /*   By: novan-ve <novan-ve@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/29 12:50:42 by novan-ve       #+#    #+#                */
-/*   Updated: 2020/01/30 17:52:48 by novan-ve      ########   odam.nl         */
+/*   Updated: 2020/02/02 20:51:10 by anon          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
+#include <math.h>
+
+int		ft_free_img(t_data *data)
+{
+	mlx_destroy_image(data->run->mlx, data->n->img);
+	mlx_destroy_image(data->run->mlx, data->s->img);
+	mlx_destroy_image(data->run->mlx, data->e->img);
+	mlx_destroy_image(data->run->mlx, data->w->img);
+	ft_free_parse(data->p, "Exited cleanly", data->p->map_y - 1);
+	return (0);
+}
 
 int		ft_key_search(t_data *data)
 {
@@ -18,40 +29,35 @@ int		ft_key_search(t_data *data)
 	{
 		if (data->keys->key_up == 1)
 		{
-			printf("Entered key_up\n");
-			if (data->p->map[(int)(data->run->posY)][(int)(data->run->posX + data->run->dirX * 0.1)] == 0 && data->p->map[(int)(data->run->posY + data->run->dirY * 0.1)][(int)(data->run->posX)] == 0)
-			{
-				data->run->posX += data->run->dirX * 0.1;
-				data->run->posY += data->run->dirY * 0.1;
-			}
+			if (data->p->map[(int)(data->run->posY)][(int)(data->run->posX + data->run->dirX * ((double)data->p->height / 8000))] == 0)
+				data->run->posX += data->run->dirX * ((double)data->p->height / 8000);
+			if (data->p->map[(int)(data->run->posY + data->run->dirY * ((double)data->p->height / 8000))][(int)(data->run->posX)] == 0)
+				data->run->posY += data->run->dirY * ((double)data->p->height / 8000);
 		}
 		if (data->keys->key_down == 1)
 		{
-			printf("Entered key_down\n");
-			if (data->p->map[(int)(data->run->posY)][(int)(data->run->posX - data->run->dirX * 0.1)] == 0)
-				data->run->posX -= data->run->dirX * 0.1;
-			if (data->p->map[(int)(data->run->posY - data->run->dirY * 0.1)][(int)(data->run->posX)] == 0)
-				data->run->posY -= data->run->dirY * 0.1;
+			if (data->p->map[(int)(data->run->posY)][(int)(data->run->posX - data->run->dirX * ((double)data->p->height / 8000))] == 0)
+				data->run->posX -= data->run->dirX * ((double)data->p->height / 8000);
+			if (data->p->map[(int)(data->run->posY - data->run->dirY * ((double)data->p->height / 8000))][(int)(data->run->posX)] == 0)
+				data->run->posY -= data->run->dirY * ((double)data->p->height / 8000);
 		}
 		if (data->keys->key_right == 1)
 		{
-			printf("Entered key_right\n");
 			double oldDirX = data->run->dirX;
-			data->run->dirX = data->run->dirX * cos(-0.033) - data->run->dirY * sin(-0.033);
-			data->run->dirY = oldDirX * sin(-0.033) + data->run->dirY * cos(-0.033);
+			data->run->dirX = data->run->dirX * cos(((double)data->p->width / 38787)) - data->run->dirY * sin(((double)data->p->width / 38787));
+			data->run->dirY = oldDirX * sin(((double)data->p->width / 38787)) + data->run->dirY * cos(((double)data->p->width / 38787));
 			double oldPlaneX = data->run->planeX;
-			data->run->planeX = data->run->planeX * cos(-0.033) - data->run->planeY * sin(-0.033);
-			data->run->planeY = oldPlaneX * sin(-0.033) + data->run->planeY * cos(-0.033);
+			data->run->planeX = data->run->planeX * cos(((double)data->p->width / 38787)) - data->run->planeY * sin(((double)data->p->width / 38787));
+			data->run->planeY = oldPlaneX * sin(((double)data->p->width / 38787)) + data->run->planeY * cos(((double)data->p->width / 38787));
 		}
 		if (data->keys->key_left == 1)
 		{
-			printf("Entered key_left\n");
 			double oldDirX = data->run->dirX;
-			data->run->dirX = data->run->dirX * cos(0.033) - data->run->dirY * sin(0.033);
-			data->run->dirY = oldDirX * sin(0.033) + data->run->dirY * cos(0.033);
+			data->run->dirX = data->run->dirX * cos(-((double)data->p->width / 38787)) - data->run->dirY * sin(-((double)data->p->width / 38787));
+			data->run->dirY = oldDirX * sin(-((double)data->p->width / 38787)) + data->run->dirY * cos(-((double)data->p->width / 38787));
 			double oldPlaneX = data->run->planeX;
-			data->run->planeX = data->run->planeX * cos(0.033) - data->run->planeY * sin(0.033);
-			data->run->planeY = oldPlaneX * sin(0.033) + data->run->planeY * cos(0.033);
+			data->run->planeX = data->run->planeX * cos(-((double)data->p->width / 38787)) - data->run->planeY * sin(-((double)data->p->width / 38787));
+			data->run->planeY = oldPlaneX * sin(-((double)data->p->width / 38787)) + data->run->planeY * cos(-((double)data->p->width / 38787));
 		}
 		ft_loop(data);
 	}
@@ -61,7 +67,7 @@ int		ft_key_search(t_data *data)
 int		ft_key_press(int keycode, t_data *data)
 {
 	if (keycode == KEY_ESC)
-		ft_exit("Escape pressed");
+		ft_free_img(data);
 	if (keycode == KEY_UP)
 		data->keys->key_up = 1;
 	if (keycode == KEY_DOWN)
@@ -86,15 +92,40 @@ int		ft_key_release(int keycode, t_data *data)
 	return (0);
 }
 
+t_img	init_img(t_data *data, char *file)
+{
+	t_img	tmp;
+
+	tmp.img = mlx_xpm_file_to_image(data->run->mlx, file, &tmp.texWidth, &tmp.texHeight);
+	tmp.addr = mlx_get_data_addr(tmp.img, &tmp.bits_per_pixel, &tmp.line_size, &tmp.endian);
+	return (tmp);
+}
+
 int		ft_run_game(t_data *data)
 {
+	t_img	n;
+	t_img	s;
+	t_img	e;
+	t_img	w;
+	t_img	sp;
+
 	data->run->mlx = mlx_init();
 	data->run->win = mlx_new_window(data->run->mlx, data->p->width, data->p->height, "cub3d");
+	n = init_img(data, data->p->no);
+	data->n = &n;
+	s = init_img(data, data->p->so);
+	data->s = &s;
+	w = init_img(data, data->p->we);
+	data->w = &w;
+	e = init_img(data, data->p->ea);
+	data->e = &e;
+	sp = init_img(data, data->p->sprite);
+	data->sp = &sp;
 	ft_loop(data);
-	//mlx_do_key_autorepeatoff(data->run->mlx);
+	mlx_do_key_autorepeaton(data->run->mlx);
 	mlx_hook(data->run->win, 2, 1L<<0, ft_key_press, data);
-	mlx_hook(data->run->win, 3, 1L<<0, ft_key_release, data);
-	mlx_hook(data->run->win, 17, 0, ft_exit, "Window closed");
+	mlx_hook(data->run->win, 3, 1L<<1, ft_key_release, data);
+	mlx_hook(data->run->win, 17, 0L, ft_free_img, data);
 	mlx_loop_hook(data->run->mlx, &ft_key_search, data);
 	mlx_loop(data->run->mlx);
 	return (0);

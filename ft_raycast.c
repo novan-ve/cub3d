@@ -6,7 +6,7 @@
 /*   By: novan-ve <novan-ve@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/29 14:53:17 by novan-ve       #+#    #+#                */
-/*   Updated: 2020/01/30 17:34:46 by novan-ve      ########   odam.nl         */
+/*   Updated: 2020/02/02 21:55:23 by anon          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,21 +22,14 @@ void	my_mlx_pixel_put(t_img *img, int x, int y, int color)
 
 int		ft_loop(t_data *data)
 {
+	int		texWidth = 64;
+	int		texHeight = 64;
+	double	ZBuffer[data->p->width];
 
-	int		texWidth;
-	int		texHeight;
-
-	t_img		png;
 	t_img		img;
-
 	img.img = mlx_new_image(data->run->mlx, data->p->width, data->p->height);
 	img.addr = mlx_get_data_addr(img.img, &img.bits_per_pixel, &img.line_size, &img.endian);
-	printf("Test1\n");
-	png.img = mlx_png_file_to_image(data->run->mlx, "./texture.png", &texWidth, &texHeight);
-	printf("Test2\n");
-	png.addr = mlx_get_data_addr(png.img, &png.bits_per_pixel, &png.line_size, &png.endian);
 	int			x = 0;
-	printf("New frame\n");
 	while (x < data->p->width)
 	{
 		double	cameraX = 2 * x / (double)data->p->width - 1;
@@ -77,22 +70,28 @@ int		ft_loop(t_data *data)
 		{
 			if (sideDistX < sideDistY)
 			{
+				if (stepX < 0)
+					side = 1;
+				else
+					side = 0;
 				sideDistX += deltaDistX;
 				mapX += stepX;
-				side = 0;
 			}
 			else
 			{
+				if (stepY < 0)
+					side = 2;
+				else
+					side = 3;
 				sideDistY += deltaDistY;
 				mapY += stepY;
-				side = 1;
 			}
 			if (data->p->map[mapY][mapX] > 0)
 				hit = 1;
 		}
-		if (side == 0)
+		if (side == 0 || side == 1)
 			perpWallDist = (mapX - data->run->posX + (1 - stepX) / 2) / rayDirX;
-		else
+		else if (side == 2 || side == 3)
 			perpWallDist = (mapY - data->run->posY + (1 - stepY) / 2) / rayDirY;
 		int lineHeight = (int)(data->p->height / perpWallDist);
 		int	drawStart = -lineHeight / 2 + data->p->height / 2;
@@ -105,60 +104,114 @@ int		ft_loop(t_data *data)
 		//Texture
 
 		double	wallX;
-		if (side == 0)
+		if (side == 0 || side == 1)
 			wallX = data->run->posY + perpWallDist * rayDirY;
-		else
+		else if (side == 2 || side == 3)
 			wallX = data->run->posX + perpWallDist * rayDirX;
 		wallX -= floor((wallX));
 
 		int		texX = (int)(wallX * (double)texWidth);
-		if (side == 0 && rayDirX > 0)
+		if ((side == 0 || side == 1) && rayDirX > 0)
 			texX = texWidth - texX - 1;
-		if (side == 1 && rayDirY < 0)
+		if ((side == 2 || side == 3) && rayDirY < 0)
 			texX = texWidth - texX - 1;
 
 		double	step = 1.0 * texHeight / lineHeight;
 
 		double	texPos = (drawStart - data->p->height / 2 + lineHeight / 2) * step;
-		int		y = drawStart;
-		//printf("Test3\n");
+		int		y = 0;
+		while (y < drawStart)
+		{
+			my_mlx_pixel_put(&img, x, y, data->p->ceiling);
+			y++;
+		}
 		while (y < drawEnd)
 		{
 			int	texY = (int)texPos & (texHeight - 1);
 			texPos += step;
 
-			int color = *(unsigned int*)(png.addr + (texY * png.line_size + texX * (png.bits_per_pixel / 8)));
-			//if (side == 1)
-			//	color = (color >> 1) & 8355711;
-
+			int color;
+			//East == 0
+			//West == 1
+			//Nord == 2
+			//Zuid == 3
+			if (side == 0)
+				color = *(unsigned int*)(data->e->addr + (texY * data->e->line_size + texX * (data->e->bits_per_pixel / 8)));
+			if (side == 1)
+				color = *(unsigned int*)(data->w->addr + (texY * data->w->line_size + texX * (data->w->bits_per_pixel / 8)));
+			if (side == 2)
+				color = *(unsigned int*)(data->n->addr + (texY * data->n->line_size + texX * (data->n->bits_per_pixel / 8)));
+			if (side == 3)
+				color = *(unsigned int*)(data->s->addr + (texY * data->s->line_size + texX * (data->s->bits_per_pixel / 8)));
 			char	*dst;
 			dst = img.addr + (y * img.line_size + x * (img.bits_per_pixel / 8));
 			*(unsigned int*)dst = color;
 
 			y++;
 		}
-		//printf("Test4\n");
+		while (y < data->p->height)
+		{
+			my_mlx_pixel_put(&img, x, y, data->p->floor);
+			y++;
+		}
 
-		//End Texture
+		//Sprite
+		// ZBuffer[x] = perpWallDist;
+		// double		sprite_X = 6;
+		// double		sprite_Y = 2;
+		// double		spriteDistance = ((data->run->posX - sprite_X) * (data->run->posX - sprite_X) + (data->run->posY - sprite_Y) * (data->run->posY - sprite_Y));
+		// double		spriteX = sprite_X - data->run->posX;
+		// double		spriteY = sprite_Y - data->run->posY;
+		// double		invDet = 1.0 / (data->run->planeX * data->run->dirY - data->run->dirX * data->run->planeY);
 
-		// int	index = 0;
-		// unsigned long	color = 14753280;
-		// if (side == 1)
-		// 	color = 8192000;
-		// while (index < data->p->height)
+		// double		transformX = invDet * (data->run->dirY * spriteX - data->run->dirX * spriteY);
+		// double		transformY = invDet * (-(data->run->planeY) * spriteX + data->run->planeX * spriteY);
+
+		// int			spriteScreenX = (int)((data->p->width / 2) * (1 + transformX / transformY));
+
+		// int			spriteHeight = data->sp->texHeight;
+
+		// int			drawStartY = -spriteHeight / 2 + data->p->height / 2;
+		// if (drawStartY < 0)
+		// 	drawStartY = 0;
+		// int			drawEndY = spriteHeight / 2 + data->p->height / 2;
+		// if (drawEndY >= data->p->height)
+		// 	drawEndY = data->p->height - 1;
+
+		// int			spriteWidth = data->sp->texWidth;
+		// int			drawStartX = -spriteWidth / 2 + spriteScreenX;
+		// if (drawStartX < 0)
+		// 	drawStartX = 0;
+		// int			drawEndX = spriteWidth / 2 + spriteScreenX;
+		// if (drawEndX >= data->p->width)
+		// 	drawEndX = data->p->width - 1;
+
+		// int		stripe = drawStartX;
+		// while (stripe < drawEndX)
 		// {
-		// 	if (index < drawStart)
-		// 		my_mlx_pixel_put(&img, x, index, data->p->ceiling);
-		// 	else if (index >= drawStart && index <= drawEnd)
-		// 		my_mlx_pixel_put(&img, x, index, color);
-		// 	else
-		// 		my_mlx_pixel_put(&img, x, index, data->p->floor);
-		// 	index++;
+		// 	int	texX = (int)(256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * texWidth / spriteWidth) / 256;
+		// 	if (transformY > 0 && stripe > 0 && stripe < data->p->width && transformY < ZBuffer[stripe])
+		// 	{
+		// 		int		y = drawStartY;
+		// 		while (y < drawEndY)
+		// 		{
+		// 			int		d = (y) * 256 - data->p->height * 128 + spriteHeight * 128;
+		// 			int		texY = ((d * texHeight) / spriteHeight) / 256;
+		// 			int	color = *(unsigned int*)(data->sp->addr + (texY * data->sp->line_size + texX * (data->sp->bits_per_pixel / 8)));
+		// 			char			*dst;
+		// 			if (color != 0x00FFFFFF)
+		// 			{
+		// 				dst = img.addr + (y * img.line_size + x * (img.bits_per_pixel / 8));
+		// 				*(unsigned int*)dst = color;
+		// 			}
+		// 			y++;
+		// 		}
+		// 	}
+		// 	stripe++;
 		// }
 		x++;
 	}
 	mlx_put_image_to_window(data->run->mlx, data->run->win, img.img, 0, 0);
 	mlx_destroy_image(data->run->mlx, img.img);
-	mlx_destroy_image(data->run->mlx, png.img);
 	return (0);
 }

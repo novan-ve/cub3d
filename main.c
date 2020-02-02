@@ -6,7 +6,7 @@
 /*   By: novan-ve <novan-ve@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/27 10:21:59 by novan-ve       #+#    #+#                */
-/*   Updated: 2020/01/30 15:52:51 by novan-ve      ########   odam.nl         */
+/*   Updated: 2020/02/02 17:50:43 by anon          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,14 +23,29 @@ t_run	init_run(t_data *data)
 {
 	t_run	run;
 
-	run.posX = data->p->posx;
-	run.posY = data->p->posy;
-	run.dirX = -1;
-	run.dirY = 0;
-	run.planeX = 0;
-	run.planeY = 0.66;
+	run.posX = data->p->posx + 0.5;
+	run.posY = data->p->posy + 0.5;
+	if (data->p->orient == 'N' || data->p->orient == 'S')
+	{
+		run.dirX = 0;
+		run.planeY = 0;
+		run.dirY = (data->p->orient == 'N') ? -1 : 1;
+		run.planeX = (data->p->orient == 'N') ? 0.66 : -0.66;
+	}
+	if (data->p->orient == 'E' || data->p->orient == 'W')
+	{
+		run.dirY = 0;
+		run.planeX = 0;
+		run.dirX = (data->p->orient == 'W') ? -1 : 1;
+		run.planeY = (data->p->orient == 'W') ? -0.66 : 0.66;
+	}
 	return (run);
 }
+
+//E = 1, 0, 0, 0.66
+//W = -1, 0, 0, -0.66
+//S = 0, 1, -0.66, 0
+//N = 0, -1, 0.66, 0
 
 t_keys	init_keys()
 {
