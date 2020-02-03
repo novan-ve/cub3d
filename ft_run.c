@@ -6,12 +6,11 @@
 /*   By: novan-ve <novan-ve@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/29 12:50:42 by novan-ve       #+#    #+#                */
-/*   Updated: 2020/02/02 20:51:10 by anon          ########   odam.nl         */
+/*   Updated: 2020/02/03 15:42:22 by novan-ve      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
-#include <math.h>
 
 int		ft_free_img(t_data *data)
 {
@@ -25,32 +24,38 @@ int		ft_free_img(t_data *data)
 
 int		ft_key_search(t_data *data)
 {
-	if (data->keys->key_up == 1 || data->keys->key_down == 1 || data->keys->key_right == 1 || data->keys->key_left == 1)
+	if (data->keys->key_up == 1 || data->keys->key_down == 1 || data->keys->key_right == 1 || data->keys->key_left == 1 || data->keys->key_a == 1 || data->keys->key_d == 1)
 	{
 		if (data->keys->key_up == 1)
 		{
-			if (data->p->map[(int)(data->run->posY)][(int)(data->run->posX + data->run->dirX * ((double)data->p->height / 8000))] == 0)
-				data->run->posX += data->run->dirX * ((double)data->p->height / 8000);
-			if (data->p->map[(int)(data->run->posY + data->run->dirY * ((double)data->p->height / 8000))][(int)(data->run->posX)] == 0)
-				data->run->posY += data->run->dirY * ((double)data->p->height / 8000);
+			if (data->p->map[(int)(data->run->posY)][(int)(data->run->posX + data->run->dirX * ((double)data->p->height / 8000.0))] == 0)
+				data->run->posX += data->run->dirX * ((double)data->p->height / 8000.0);
+			if (data->p->map[(int)(data->run->posY + data->run->dirY * ((double)data->p->height / 8000.0))][(int)(data->run->posX)] == 0)
+				data->run->posY += data->run->dirY * ((double)data->p->height / 8000.0);
 		}
 		if (data->keys->key_down == 1)
 		{
-			if (data->p->map[(int)(data->run->posY)][(int)(data->run->posX - data->run->dirX * ((double)data->p->height / 8000))] == 0)
-				data->run->posX -= data->run->dirX * ((double)data->p->height / 8000);
-			if (data->p->map[(int)(data->run->posY - data->run->dirY * ((double)data->p->height / 8000))][(int)(data->run->posX)] == 0)
-				data->run->posY -= data->run->dirY * ((double)data->p->height / 8000);
+			if (data->p->map[(int)(data->run->posY)][(int)(data->run->posX - data->run->dirX * ((double)data->p->height / 8000.0))] == 0)
+				data->run->posX -= data->run->dirX * ((double)data->p->height / 8000.0);
+			if (data->p->map[(int)(data->run->posY - data->run->dirY * ((double)data->p->height / 8000.0))][(int)(data->run->posX)] == 0)
+				data->run->posY -= data->run->dirY * ((double)data->p->height / 8000.0);
 		}
 		if (data->keys->key_right == 1)
 		{
-			double oldDirX = data->run->dirX;
-			data->run->dirX = data->run->dirX * cos(((double)data->p->width / 38787)) - data->run->dirY * sin(((double)data->p->width / 38787));
-			data->run->dirY = oldDirX * sin(((double)data->p->width / 38787)) + data->run->dirY * cos(((double)data->p->width / 38787));
-			double oldPlaneX = data->run->planeX;
-			data->run->planeX = data->run->planeX * cos(((double)data->p->width / 38787)) - data->run->planeY * sin(((double)data->p->width / 38787));
-			data->run->planeY = oldPlaneX * sin(((double)data->p->width / 38787)) + data->run->planeY * cos(((double)data->p->width / 38787));
+			if (data->p->map[(int)(data->run->posY)][(int)(data->run->posX - data->run->dirY * ((double)data->p->height / 8000.0))] == 0)
+				data->run->posX -= data->run->dirY * ((double)data->p->height / 8000.0);
+			if (data->p->map[(int)(data->run->posY - data->run->dirX * -((double)data->p->height / 8000.0))][(int)(data->run->posX)] == 0)
+				data->run->posY -= data->run->dirX * -((double)data->p->height / 8000.0);
+
 		}
 		if (data->keys->key_left == 1)
+		{
+			if (data->p->map[(int)(data->run->posY)][(int)(data->run->posX + data->run->dirY * ((double)data->p->height / 8000.0))] == 0)
+				data->run->posX += data->run->dirY * ((double)data->p->height / 8000.0);
+			if (data->p->map[(int)(data->run->posY + data->run->dirX * -((double)data->p->height / 8000.0))][(int)(data->run->posX)] == 0)
+				data->run->posY += data->run->dirX * -((double)data->p->height / 8000.0);
+		}
+		if (data->keys->key_a == 1)
 		{
 			double oldDirX = data->run->dirX;
 			data->run->dirX = data->run->dirX * cos(-((double)data->p->width / 38787)) - data->run->dirY * sin(-((double)data->p->width / 38787));
@@ -58,6 +63,15 @@ int		ft_key_search(t_data *data)
 			double oldPlaneX = data->run->planeX;
 			data->run->planeX = data->run->planeX * cos(-((double)data->p->width / 38787)) - data->run->planeY * sin(-((double)data->p->width / 38787));
 			data->run->planeY = oldPlaneX * sin(-((double)data->p->width / 38787)) + data->run->planeY * cos(-((double)data->p->width / 38787));
+		}
+		if (data->keys->key_d == 1)
+		{
+			double oldDirX = data->run->dirX;
+			data->run->dirX = data->run->dirX * cos(((double)data->p->width / 38787)) - data->run->dirY * sin(((double)data->p->width / 38787));
+			data->run->dirY = oldDirX * sin(((double)data->p->width / 38787)) + data->run->dirY * cos(((double)data->p->width / 38787));
+			double oldPlaneX = data->run->planeX;
+			data->run->planeX = data->run->planeX * cos(((double)data->p->width / 38787)) - data->run->planeY * sin(((double)data->p->width / 38787));
+			data->run->planeY = oldPlaneX * sin(((double)data->p->width / 38787)) + data->run->planeY * cos(((double)data->p->width / 38787));
 		}
 		ft_loop(data);
 	}
@@ -76,6 +90,10 @@ int		ft_key_press(int keycode, t_data *data)
 		data->keys->key_right = 1;
 	if (keycode == KEY_LEFT)
 		data->keys->key_left = 1;
+	if (keycode == KEY_A)
+		data->keys->key_a = 1;
+	if (keycode == KEY_D)
+		data->keys->key_d = 1;
 	return (0);
 }
 
@@ -89,6 +107,10 @@ int		ft_key_release(int keycode, t_data *data)
 		data->keys->key_right = 0;
 	if (keycode == KEY_LEFT)
 		data->keys->key_left = 0;
+	if (keycode == KEY_A)
+		data->keys->key_a = 0;
+	if (keycode == KEY_D)
+		data->keys->key_d = 0;
 	return (0);
 }
 

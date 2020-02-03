@@ -6,22 +6,24 @@
 /*   By: novan-ve <novan-ve@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/27 10:13:45 by novan-ve       #+#    #+#                */
-/*   Updated: 2020/02/02 20:50:08 by anon          ########   odam.nl         */
+/*   Updated: 2020/02/03 14:43:27 by novan-ve      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CUB3D_H
 # define CUB3D_H
 
-# define KEY_ESC 0xff1b
-# define KEY_LEFT 0xff51
-# define KEY_RIGHT 0xff53
-# define KEY_DOWN 0xff54
-# define KEY_UP 0xff52
+# define KEY_ESC 53
+# define KEY_LEFT 123
+# define KEY_RIGHT 124
+# define KEY_DOWN 125
+# define KEY_UP 126
+# define KEY_A 0
+# define KEY_D 2
 
 # include "get_next_line/get_next_line.h"
 # include "printf/ft_printf.h"
-# include "mlx.h"
+# include "mlx/mlx.h"
 # include <fcntl.h>
 # include <stdlib.h>
 # include <stdio.h>
@@ -80,6 +82,8 @@ typedef struct		s_keys
 	int				key_down;
 	int				key_left;
 	int				key_right;
+	int				key_a;
+	int				key_d;
 }					t_keys;
 
 

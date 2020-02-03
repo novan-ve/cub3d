@@ -6,7 +6,7 @@
 /*   By: novan-ve <novan-ve@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/29 14:53:17 by novan-ve       #+#    #+#                */
-/*   Updated: 2020/02/02 21:55:23 by anon          ########   odam.nl         */
+/*   Updated: 2020/02/03 17:41:05 by novan-ve      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int		ft_loop(t_data *data)
 {
 	int		texWidth = 64;
 	int		texHeight = 64;
-	double	ZBuffer[data->p->width];
+	double		ZBuffer[data->p->width];
 
 	t_img		img;
 	img.img = mlx_new_image(data->run->mlx, data->p->width, data->p->height);
@@ -41,7 +41,7 @@ int		ft_loop(t_data *data)
 		double	sideDistY;
 		double	deltaDistX = fabs(1 / rayDirX);
 		double	deltaDistY = fabs(1 / rayDirY);
-		double	perpWallDist;
+		double	perpWallDist = 0;
 		int		stepX;
 		int		stepY;
 		int		hit = 0;
@@ -86,7 +86,7 @@ int		ft_loop(t_data *data)
 				sideDistY += deltaDistY;
 				mapY += stepY;
 			}
-			if (data->p->map[mapY][mapX] > 0)
+			if (data->p->map[mapY][mapX] == 1)
 				hit = 1;
 		}
 		if (side == 0 || side == 1)
@@ -103,7 +103,7 @@ int		ft_loop(t_data *data)
 
 		//Texture
 
-		double	wallX;
+		double	wallX = 0;
 		if (side == 0 || side == 1)
 			wallX = data->run->posY + perpWallDist * rayDirY;
 		else if (side == 2 || side == 3)
@@ -154,62 +154,54 @@ int		ft_loop(t_data *data)
 			my_mlx_pixel_put(&img, x, y, data->p->floor);
 			y++;
 		}
-
-		//Sprite
-		// ZBuffer[x] = perpWallDist;
-		// double		sprite_X = 6;
-		// double		sprite_Y = 2;
-		// double		spriteDistance = ((data->run->posX - sprite_X) * (data->run->posX - sprite_X) + (data->run->posY - sprite_Y) * (data->run->posY - sprite_Y));
-		// double		spriteX = sprite_X - data->run->posX;
-		// double		spriteY = sprite_Y - data->run->posY;
-		// double		invDet = 1.0 / (data->run->planeX * data->run->dirY - data->run->dirX * data->run->planeY);
-
-		// double		transformX = invDet * (data->run->dirY * spriteX - data->run->dirX * spriteY);
-		// double		transformY = invDet * (-(data->run->planeY) * spriteX + data->run->planeX * spriteY);
-
-		// int			spriteScreenX = (int)((data->p->width / 2) * (1 + transformX / transformY));
-
-		// int			spriteHeight = data->sp->texHeight;
-
-		// int			drawStartY = -spriteHeight / 2 + data->p->height / 2;
-		// if (drawStartY < 0)
-		// 	drawStartY = 0;
-		// int			drawEndY = spriteHeight / 2 + data->p->height / 2;
-		// if (drawEndY >= data->p->height)
-		// 	drawEndY = data->p->height - 1;
-
-		// int			spriteWidth = data->sp->texWidth;
-		// int			drawStartX = -spriteWidth / 2 + spriteScreenX;
-		// if (drawStartX < 0)
-		// 	drawStartX = 0;
-		// int			drawEndX = spriteWidth / 2 + spriteScreenX;
-		// if (drawEndX >= data->p->width)
-		// 	drawEndX = data->p->width - 1;
-
-		// int		stripe = drawStartX;
-		// while (stripe < drawEndX)
-		// {
-		// 	int	texX = (int)(256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * texWidth / spriteWidth) / 256;
-		// 	if (transformY > 0 && stripe > 0 && stripe < data->p->width && transformY < ZBuffer[stripe])
-		// 	{
-		// 		int		y = drawStartY;
-		// 		while (y < drawEndY)
-		// 		{
-		// 			int		d = (y) * 256 - data->p->height * 128 + spriteHeight * 128;
-		// 			int		texY = ((d * texHeight) / spriteHeight) / 256;
-		// 			int	color = *(unsigned int*)(data->sp->addr + (texY * data->sp->line_size + texX * (data->sp->bits_per_pixel / 8)));
-		// 			char			*dst;
-		// 			if (color != 0x00FFFFFF)
-		// 			{
-		// 				dst = img.addr + (y * img.line_size + x * (img.bits_per_pixel / 8));
-		// 				*(unsigned int*)dst = color;
-		// 			}
-		// 			y++;
-		// 		}
-		// 	}
-		// 	stripe++;
-		// }
 		x++;
+		ZBuffer[x] = perpWallDist;
+	}
+	double		sprite_X = 6;
+	double		sprite_Y = 2;
+	//double		spriteDistance = ((data->run->posX - sprite_X) * (data->run->posX - sprite_X) + (data->run->posY - sprite_Y) * (data->run->posY - sprite_Y));
+	double		spriteX = sprite_X - data->run->posX;
+	double		spriteY = sprite_Y - data->run->posY;
+	double		invDet = 1.0 / (data->run->planeX * data->run->dirY - data->run->dirX * data->run->planeY);
+	double		transformX = invDet * (data->run->dirY * spriteX - data->run->dirX * spriteY);
+	double		transformY = invDet * (-(data->run->planeY) * spriteX + data->run->planeX * spriteY);
+	int			spriteScreenX = (int)((data->p->width / 2) * (1 + transformX / transformY));
+	int				spriteHeight = abs((int)(data->p->height / (transformY)));
+	int			drawStartY = -spriteHeight / 2 + data->p->height / 2;
+	if (drawStartY < 0)
+		drawStartY = 0;
+	int			drawEndY = spriteHeight / 2 + data->p->height / 2;
+	if (drawEndY >= data->p->height)
+		drawEndY = data->p->height - 1;
+	int			spriteWidth = abs((int)(data->p->height / (transformY)));
+	int			drawStartX = -spriteWidth / 2 + spriteScreenX;
+	if (drawStartX < 0)
+		drawStartX = 0;
+	int			drawEndX = spriteWidth / 2 + spriteScreenX;
+	if (drawEndX >= data->p->width)
+		drawEndX = data->p->width - 1;
+	int		stripe = drawStartX;
+	while (stripe < drawEndX)
+	{
+		int	texX = (int)(256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * texWidth / spriteWidth) / 256;
+		if (transformY > 0 && stripe > 0 && stripe < data->p->width && transformY < ZBuffer[stripe])
+		{
+			int		y = drawStartY;
+			while (y < drawEndY)
+			{
+				int		d = (y) * 256 - data->p->height * 128 + spriteHeight * 128;
+				int		texY = ((d * texHeight) / spriteHeight) / 256;
+				unsigned int	color = *(unsigned int*)(data->sp->addr + (texY * data->sp->line_size + texX * (data->sp->bits_per_pixel / 8)));
+				char			*dst;
+				if (color != 0xFF000000)
+				{
+					dst = img.addr + (y * img.line_size + stripe * (img.bits_per_pixel / 8));
+					*(unsigned int*)dst = color;
+				}
+				y++;
+			}
+		}
+		stripe++;
 	}
 	mlx_put_image_to_window(data->run->mlx, data->run->win, img.img, 0, 0);
 	mlx_destroy_image(data->run->mlx, img.img);
