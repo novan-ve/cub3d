@@ -23,7 +23,7 @@ int		ft_cpy(char **line, char **str, int fd);
 int		ft_strcheck(char *str);
 char	*ft_strread(int fd, char **str, ssize_t red);
 char	*ft_plusn(char *str);
-size_t	ft_strlen(const char *s);
+size_t	ft_gstrlen(const char *s);
 char	*ft_gstrdup(char *s1);
 char	*ft_strcat2(char *origin, char *append, char *dest);
 char	*ft_strcat(char *origin, char *append);

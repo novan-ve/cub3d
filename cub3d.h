@@ -6,24 +6,24 @@
 /*   By: novan-ve <novan-ve@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/27 10:13:45 by novan-ve       #+#    #+#                */
-/*   Updated: 2020/02/03 14:43:27 by novan-ve      ########   odam.nl         */
+/*   Updated: 2020/02/04 12:34:06 by anon          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CUB3D_H
 # define CUB3D_H
 
-# define KEY_ESC 53
-# define KEY_LEFT 123
-# define KEY_RIGHT 124
-# define KEY_DOWN 125
-# define KEY_UP 126
-# define KEY_A 0
-# define KEY_D 2
+# define KEY_ESC 0xff1b
+# define KEY_LEFT 0xff51
+# define KEY_RIGHT 0xff53
+# define KEY_A 0x61
+# define KEY_S 0x73
+# define KEY_D 0x64
+# define KEY_W 0x77
 
 # include "get_next_line/get_next_line.h"
 # include "printf/ft_printf.h"
-# include "mlx/mlx.h"
+# include <mlx.h>
 # include <fcntl.h>
 # include <stdlib.h>
 # include <stdio.h>
@@ -51,6 +51,8 @@ typedef struct		s_parse
 	int				map_y;
 	int				**map;
 	int				check;
+	int				isprite;
+	int				**spmap;
 }					t_parse;
 
 typedef struct		s_run
@@ -78,12 +80,12 @@ typedef struct		s_img
 
 typedef struct		s_keys
 {
-	int				key_up;
-	int				key_down;
 	int				key_left;
 	int				key_right;
 	int				key_a;
+	int				key_s;
 	int				key_d;
+	int				key_w;
 }					t_keys;
 
 
@@ -110,6 +112,9 @@ t_parse				ft_parse(char *file);
 void				ft_init_parse(t_parse *p);
 void				ft_read(t_parse *p);
 void				ft_free_parse(t_parse *p, char *s, int y);
+
+void				ft_sprite_init(t_parse *p);
+void				ft_free_sprite(t_parse *p, char *s, int i);
 
 void				ft_fill_r(t_parse *p);
 void				ft_fill_path(t_parse *p);

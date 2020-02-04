@@ -67,11 +67,11 @@ all: $(NAME)
 FLAGS: -Wall -Werror -Wextra
 
 $(NAME): $(SRC) libft.h
-	gcc $(FLAGS) -c $(SRC)
+	clang $(FLAGS) -c $(SRC)
 	ar rc $(NAME) $(OBJ)
 
 bonus: $(BSRC) libft.h
-	gcc $(FLAGS) -c $(BSRC)
+	clang $(FLAGS) -c $(BSRC)
 	ar rc $(NAME) $(BOBJ)
 
 clean:

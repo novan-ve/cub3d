@@ -6,7 +6,7 @@
 /*   By: novan-ve <novan-ve@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/27 13:23:24 by novan-ve       #+#    #+#                */
-/*   Updated: 2020/01/30 15:30:12 by novan-ve      ########   odam.nl         */
+/*   Updated: 2020/02/04 10:46:17 by anon          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@ int		ft_map_init3(t_parse *p, int x, int y, int i)
 			ft_free_parse(p, "Encountered hole in outer walls", y);
 		if (a != '1' && (x == p->map_x || x == 0))
 			ft_free_parse(p, "Encountered hole in outer walls", y);
+		if (a == '2')
+			p->isprite++;
 		p->map[y][x] = p->line[i] - 48;
 		x++;
 	}
@@ -44,7 +46,6 @@ int		ft_map_init3(t_parse *p, int x, int y, int i)
 		if (p->orient != 0 || y == 0 || y == p->map_y - 1)
 			ft_free_parse(p, "Multiple letters in map", y);
 		p->orient = a;
-		//p->map[y][x] = p->line[i];
 		p->map[y][x] = 0;
 		p->posx = x;
 		p->posy = y;

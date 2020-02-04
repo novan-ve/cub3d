@@ -6,7 +6,7 @@
 /*   By: novan-ve <novan-ve@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/29 14:53:17 by novan-ve       #+#    #+#                */
-/*   Updated: 2020/02/03 17:41:05 by novan-ve      ########   odam.nl         */
+/*   Updated: 2020/02/04 13:21:38 by anon          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,50 @@ void	my_mlx_pixel_put(t_img *img, int x, int y, int color)
 	*(unsigned int*)dst = color;
 }
 
+void	ft_sprite_sort(t_data *data)
+{
+	double spriteDistance[data->p->isprite];
+	int			copy[data->p->isprite][2];
+	int			i;
+	int			j;
+	double		tmp;
+	int			tmpi;
+
+	i = 0;
+	while (i < data->p->isprite)
+	{
+		spriteDistance[i] = ((data->run->posX - data->p->spmap[i][1]) * (data->run->posX - data->p->spmap[i][1]) + (data->run->posY - data->p->spmap[i][0]) * (data->run->posY - data->p->spmap[i][0]));
+		copy[i][0] = data->p->spmap[i][0];
+		copy[i][1] = data->p->spmap[i][1];
+		i++;
+	}
+	i = 0;
+	while (i < data->p->isprite)
+	{
+		j = 0;
+		tmp = 0.0;
+		tmpi = 0;
+		while (j < data->p->isprite)
+		{
+			if (spriteDistance[j] > tmp)
+			{
+				tmp = spriteDistance[j];
+				tmpi = j;
+			}
+			j++;
+		}
+		data->p->spmap[i][0] = copy[tmpi][0];
+		data->p->spmap[i][1] = copy[tmpi][1];
+		spriteDistance[tmpi] = 0;
+		i++;
+	}
+}
+
 int		ft_loop(t_data *data)
 {
-	int		texWidth = 64;
-	int		texHeight = 64;
 	double		ZBuffer[data->p->width];
+	int			texWidth = 64;
+	int			texHeight = 64;
 
 	t_img		img;
 	img.img = mlx_new_image(data->run->mlx, data->p->width, data->p->height);
@@ -154,54 +193,59 @@ int		ft_loop(t_data *data)
 			my_mlx_pixel_put(&img, x, y, data->p->floor);
 			y++;
 		}
-		x++;
 		ZBuffer[x] = perpWallDist;
+		x++;
 	}
-	double		sprite_X = 6;
-	double		sprite_Y = 2;
-	//double		spriteDistance = ((data->run->posX - sprite_X) * (data->run->posX - sprite_X) + (data->run->posY - sprite_Y) * (data->run->posY - sprite_Y));
-	double		spriteX = sprite_X - data->run->posX;
-	double		spriteY = sprite_Y - data->run->posY;
-	double		invDet = 1.0 / (data->run->planeX * data->run->dirY - data->run->dirX * data->run->planeY);
-	double		transformX = invDet * (data->run->dirY * spriteX - data->run->dirX * spriteY);
-	double		transformY = invDet * (-(data->run->planeY) * spriteX + data->run->planeX * spriteY);
-	int			spriteScreenX = (int)((data->p->width / 2) * (1 + transformX / transformY));
-	int				spriteHeight = abs((int)(data->p->height / (transformY)));
-	int			drawStartY = -spriteHeight / 2 + data->p->height / 2;
-	if (drawStartY < 0)
-		drawStartY = 0;
-	int			drawEndY = spriteHeight / 2 + data->p->height / 2;
-	if (drawEndY >= data->p->height)
-		drawEndY = data->p->height - 1;
-	int			spriteWidth = abs((int)(data->p->height / (transformY)));
-	int			drawStartX = -spriteWidth / 2 + spriteScreenX;
-	if (drawStartX < 0)
-		drawStartX = 0;
-	int			drawEndX = spriteWidth / 2 + spriteScreenX;
-	if (drawEndX >= data->p->width)
-		drawEndX = data->p->width - 1;
-	int		stripe = drawStartX;
-	while (stripe < drawEndX)
+
+	//Sprite
+	ft_sprite_sort(data);
+	int			i = 0;
+	while (i < data->p->isprite)
 	{
-		int	texX = (int)(256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * texWidth / spriteWidth) / 256;
-		if (transformY > 0 && stripe > 0 && stripe < data->p->width && transformY < ZBuffer[stripe])
+		double		spriteX = data->p->spmap[i][1] - data->run->posX + 0.5;
+		double		spriteY = data->p->spmap[i][0] - data->run->posY + 0.5;
+		double		invDet = 1.0 / (data->run->planeX * data->run->dirY - data->run->dirX * data->run->planeY);
+		double		transformX = invDet * (data->run->dirY * spriteX - data->run->dirX * spriteY);
+		double		transformY = invDet * (-(data->run->planeY) * spriteX + data->run->planeX * spriteY);
+		int			spriteScreenX = (int)((data->p->width / 2) * (1 + transformX / transformY));
+		int				spriteHeight = abs((int)(data->p->height / (transformY)));
+		int			drawStartY = -spriteHeight / 2 + data->p->height / 2;
+		if (drawStartY < 0)
+			drawStartY = 0;
+		int			drawEndY = spriteHeight / 2 + data->p->height / 2;
+		if (drawEndY >= data->p->height)
+			drawEndY = data->p->height - 1;
+		int			spriteWidth = abs((int)(data->p->height / (transformY)));
+		int			drawStartX = -spriteWidth / 2 + spriteScreenX;
+		if (drawStartX < 0)
+			drawStartX = 0;
+		int			drawEndX = spriteWidth / 2 + spriteScreenX;
+		if (drawEndX >= data->p->width)
+			drawEndX = data->p->width - 1;
+		int		stripe = drawStartX;
+		while (stripe < drawEndX)
 		{
-			int		y = drawStartY;
-			while (y < drawEndY)
+			int	texX = (int)(256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * data->sp->texWidth / spriteWidth) / 256;
+			if (transformY > 0 && stripe > 0 && stripe < data->p->width && transformY < ZBuffer[stripe])
 			{
-				int		d = (y) * 256 - data->p->height * 128 + spriteHeight * 128;
-				int		texY = ((d * texHeight) / spriteHeight) / 256;
-				unsigned int	color = *(unsigned int*)(data->sp->addr + (texY * data->sp->line_size + texX * (data->sp->bits_per_pixel / 8)));
-				char			*dst;
-				if (color != 0xFF000000)
+				int		y = drawStartY;
+				while (y < drawEndY)
 				{
-					dst = img.addr + (y * img.line_size + stripe * (img.bits_per_pixel / 8));
-					*(unsigned int*)dst = color;
+					int		d = (y) * 256 - data->p->height * 128 + spriteHeight * 128;
+					int		texY = ((d * data->sp->texHeight) / spriteHeight) / 256;
+					unsigned int	color = *(unsigned int*)(data->sp->addr + (texY * data->sp->line_size + texX * (data->sp->bits_per_pixel / 8)));
+					char			*dst;
+					if (color != 0x000000)
+					{
+						dst = img.addr + (y * img.line_size + stripe * (img.bits_per_pixel / 8));
+						*(unsigned int*)dst = color;
+					}
+					y++;
 				}
-				y++;
 			}
+			stripe++;
 		}
-		stripe++;
+		i++;
 	}
 	mlx_put_image_to_window(data->run->mlx, data->run->win, img.img, 0, 0);
 	mlx_destroy_image(data->run->mlx, img.img);

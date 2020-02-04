@@ -6,7 +6,7 @@
 /*   By: novan-ve <novan-ve@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/27 10:21:59 by novan-ve       #+#    #+#                */
-/*   Updated: 2020/02/03 14:43:14 by novan-ve      ########   odam.nl         */
+/*   Updated: 2020/02/04 12:27:38 by anon          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,12 +51,12 @@ t_keys	init_keys()
 {
 	t_keys	keys;
 
-	keys.key_up = 0;
-	keys.key_down = 0;
 	keys.key_left = 0;
 	keys.key_right = 0;
 	keys.key_a = 0;
+	keys.key_s = 0;
 	keys.key_d = 0;
+	keys.key_w = 0;
 	return (keys);
 }
 

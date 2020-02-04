@@ -6,7 +6,7 @@
 /*   By: novan-ve <novan-ve@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/27 11:17:26 by novan-ve       #+#    #+#                */
-/*   Updated: 2020/01/27 16:43:28 by novan-ve      ########   odam.nl         */
+/*   Updated: 2020/02/04 10:40:54 by anon          ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,7 @@ void	ft_init_parse(t_parse *p)
 	p->posy = 0;
 	p->orient = 0;
 	p->check = 1;
+	p->isprite = 0;
 }
 
 t_parse	ft_parse(char *file)
@@ -118,6 +119,12 @@ t_parse	ft_parse(char *file)
 	if (p.fd == -1)
 		ft_free_parse(&p, "Failed to open file second time", 0);
 	ft_map_init(&p);
+	close(p.fd);
+	p.fd = open (file, O_RDONLY);
+	if (p.fd == -1)
+		ft_free_parse(&p, "Failed to open file third time", p.map_y - 1);
+	if (p.isprite > 0)
+		ft_sprite_init(&p);
 	close(p.fd);
 	ft_val_check(&p);
 	return (p);
