@@ -30,7 +30,7 @@ $(NAME): $(SRCS) ft_printf.h
 	make -C libft
 	cp libft/libft.a .
 	mv libft.a $(NAME)
-	clang $(FLAGS) $(SRCS)
+	gcc $(FLAGS) $(SRCS)
 	ar rc $(NAME) $(OBJS)
 	ranlib $(NAME)
 

@@ -12,7 +12,7 @@
 
 #include "get_next_line.h"
 
-size_t	ft_gstrlen(const char *s)
+size_t	ft_strlen(const char *s)
 {
 	size_t	index;
 
@@ -28,7 +28,7 @@ char	*ft_gstrdup(char *s1)
 	char	*p;
 	size_t	len;
 
-	len = ft_gstrlen(s1) + 1;
+	len = ft_strlen(s1) + 1;
 	ptr = malloc(len);
 	if (ptr == 0)
 		return (NULL);
@@ -72,7 +72,7 @@ char	*ft_strcat(char *origin, char *append)
 	char	*dest;
 
 	i = 0;
-	x = ft_gstrlen(origin) + ft_gstrlen(append);
+	x = ft_strlen(origin) + ft_strlen(append);
 	dest = (char*)malloc(sizeof(char) * (x + 1));
 	if (!dest)
 	{

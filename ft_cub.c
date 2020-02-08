@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        ::::::::            */
-/*   main.c                                             :+:    :+:            */
+/*   ft_cub.c                                           :+:    :+:            */
 /*                                                     +:+                    */
 /*   By: novan-ve <novan-ve@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/27 10:21:59 by novan-ve       #+#    #+#                */
-/*   Updated: 2020/02/04 12:27:38 by anon          ########   odam.nl         */
+/*   Updated: 2020/02/08 17:24:30 by novan-ve      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int		ft_exit(char *s)
 {
-	printf("%s\n", s);
+	ft_printf("Error\n%s\n", s);
 	exit(0);
 	return (0);
 }
@@ -23,31 +23,26 @@ t_run	init_run(t_data *data)
 {
 	t_run	run;
 
-	run.posX = data->p->posx + 0.5;
-	run.posY = data->p->posy + 0.5;
+	run.posx = data->p->posx + 0.5;
+	run.posy = data->p->posy + 0.5;
 	if (data->p->orient == 'N' || data->p->orient == 'S')
 	{
-		run.dirX = 0;
-		run.planeY = 0;
-		run.dirY = (data->p->orient == 'N') ? -1 : 1;
-		run.planeX = (data->p->orient == 'N') ? 0.66 : -0.66;
+		run.dirx = 0;
+		run.planey = 0;
+		run.diry = (data->p->orient == 'N') ? -1 : 1;
+		run.planex = (data->p->orient == 'N') ? 0.66 : -0.66;
 	}
 	if (data->p->orient == 'E' || data->p->orient == 'W')
 	{
-		run.dirY = 0;
-		run.planeX = 0;
-		run.dirX = (data->p->orient == 'W') ? -1 : 1;
-		run.planeY = (data->p->orient == 'W') ? -0.66 : 0.66;
+		run.diry = 0;
+		run.planex = 0;
+		run.dirx = (data->p->orient == 'W') ? -1 : 1;
+		run.planey = (data->p->orient == 'W') ? -0.66 : 0.66;
 	}
 	return (run);
 }
 
-//E = 1, 0, 0, 0.66
-//W = -1, 0, 0, -0.66
-//S = 0, 1, -0.66, 0
-//N = 0, -1, 0.66, 0
-
-t_keys	init_keys()
+t_keys	init_keys(void)
 {
 	t_keys	keys;
 
@@ -67,7 +62,7 @@ int		main(int argc, char **argv)
 	t_run	run;
 	t_keys	keys;
 
-	if (argc != 2)
+	if (argc < 2 || argc > 3 || (argc == 3 && ft_strncmp(argv[2], "--save", 7)))
 	{
 		ft_printf("No map found\n");
 		return (0);
@@ -77,9 +72,11 @@ int		main(int argc, char **argv)
 	ft_printf("Map initialised!\n");
 	data.p = &parse;
 	data.p->file = argv[1];
+	if (argc == 3)
+		data.p->save = (!ft_strncmp(argv[2], "--save", 6)) ? 1 : 0;
 	ft_printf("Opening game ...\n");
 	run = init_run(&data);
-	data.run = &run;
+	data.r = &run;
 	keys = init_keys();
 	data.keys = &keys;
 	ft_run_game(&data);
