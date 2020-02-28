@@ -6,7 +6,7 @@
 /*   By: novan-ve <novan-ve@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/27 11:17:26 by novan-ve       #+#    #+#                */
-/*   Updated: 2020/02/08 12:31:39 by novan-ve      ########   odam.nl         */
+/*   Updated: 2020/02/10 14:05:48 by novan-ve      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,27 +15,33 @@
 void	ft_file_check(t_parse *p, char *file)
 {
 	int		fd;
+	int		i;
 
 	fd = open(file, O_RDONLY);
 	if (fd == -1)
-		ft_free_parse(p, "Non existing file", p->map_y - 1);
+		ft_free_parse(p, "Non existing file", p->map_y - 1, 1);
 	close(fd);
+	i = ft_strlen(file);
+	if (file[i - 1] != 'm' || file[i - 2] != 'p' || file[i - 3] != 'x')
+		ft_free_parse(p, "Non xpm file", p->map_y - 1, 1);
+	if (file[i - 4] != '.')
+		ft_free_parse(p, "Non xpm file", p->map_y - 1, 1);
 }
 
 void	ft_val_check(t_parse *p)
 {
 	if (p->width == 0 || p->height == 0)
-		ft_free_parse(p, "Wrong resolution", p->map_y - 1);
+		ft_free_parse(p, "Wrong resolution", p->map_y - 1, 1);
 	if (p->orient == 0)
-		ft_free_parse(p, "Missing orientation", p->map_y - 1);
+		ft_free_parse(p, "Missing orientation", p->map_y - 1, 1);
 	if (p->posx == 0 || p->posy == 0)
-		ft_free_parse(p, "Missing player letter", p->map_y - 1);
+		ft_free_parse(p, "Missing player letter", p->map_y - 1, 1);
 	if (!p->no || !p->so || !p->we || !p->ea || !p->sprite)
-		ft_free_parse(p, "Missing path", p->map_y - 1);
+		ft_free_parse(p, "Missing path", p->map_y - 1, 1);
 	if (p->floor < 0 || p->ceiling < 0)
-		ft_free_parse(p, "Wrong colors for ceiling/floor", p->map_y - 1);
+		ft_free_parse(p, "Wrong colors for ceiling/floor", p->map_y - 1, 1);
 	if (!p->map)
-		ft_free_parse(p, "Missing map", 0);
+		ft_free_parse(p, "Missing map", 0, 1);
 	if (p->width > 2560)
 		p->width = 2560;
 	if (p->height > 1440)
@@ -68,10 +74,10 @@ void	ft_read(t_parse *p)
 			ft_fill_color(p);
 		else if (p->line[0] == 'F' && p->floor == 0)
 			ft_fill_color(p);
-		else if (p->line[0] == '1')
+		else if (p->line[0] == '1' || p->line[0] == '0' || p->line[0] == '2')
 			p->map_y++;
 		else if (p->line[0] != '\0')
-			ft_free_parse(p, "Wrong format in map", 0);
+			ft_free_parse(p, "Wrong format in map", 0, 1);
 		free(p->line);
 	}
 }
@@ -79,9 +85,9 @@ void	ft_read(t_parse *p)
 void	ft_init_parse(t_parse *p, char *file)
 {
 	if (file[ft_strlen(file) - 1] != 'b' || file[ft_strlen(file) - 2] != 'u')
-		ft_exit("Not a cub format");
+		ft_exit("Not a cub format", 1);
 	if (file[ft_strlen(file) - 3] != 'c' || file[ft_strlen(file) - 4] != '.')
-		ft_exit("Not a cub format");
+		ft_exit("Not a cub format", 1);
 	p->width = 0;
 	p->height = 0;
 	p->orient = 0;
@@ -111,17 +117,17 @@ t_parse	ft_parse(char *file)
 	ft_init_parse(&p, file);
 	p.fd = open(file, O_RDONLY);
 	if (p.fd == -1)
-		ft_free_parse(&p, "Failed to open file", 0);
+		ft_free_parse(&p, "Failed to open file", 0, 1);
 	ft_read(&p);
 	close(p.fd);
 	p.fd = open(file, O_RDONLY);
 	if (p.fd == -1)
-		ft_free_parse(&p, "Failed to open file second time", 0);
+		ft_free_parse(&p, "Failed to open file second time", 0, 1);
 	ft_map_init(&p);
 	close(p.fd);
 	p.fd = open(file, O_RDONLY);
 	if (p.fd == -1)
-		ft_free_parse(&p, "Failed to open file third time", p.map_y - 1);
+		ft_free_parse(&p, "Failed to open file third time", p.map_y - 1, 1);
 	if (p.isprite > 0)
 		ft_sprite_init(&p);
 	close(p.fd);

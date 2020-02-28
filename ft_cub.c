@@ -6,15 +6,17 @@
 /*   By: novan-ve <novan-ve@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/27 10:21:59 by novan-ve       #+#    #+#                */
-/*   Updated: 2020/02/08 17:24:30 by novan-ve      ########   odam.nl         */
+/*   Updated: 2020/02/10 13:55:12 by novan-ve      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-int		ft_exit(char *s)
+int		ft_exit(char *s, int x)
 {
-	ft_printf("Error\n%s\n", s);
+	if (x == 1)
+		ft_printf("Error\n");
+	ft_printf("%s\n", s);
 	exit(0);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: novan-ve <novan-ve@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/27 10:13:45 by novan-ve       #+#    #+#                */
-/*   Updated: 2020/02/08 17:23:21 by novan-ve      ########   odam.nl         */
+/*   Updated: 2020/02/10 14:16:59 by novan-ve      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,7 @@ typedef struct		s_parse
 	int				isprite;
 	int				**spmap;
 	int				save;
+	int				*mwidth;
 }					t_parse;
 
 typedef struct		s_run
@@ -152,45 +153,35 @@ typedef struct		s_data
 	t_img			*sp;
 }					t_data;
 
-int					ft_exit(char *s);
+int					ft_exit(char *s, int x);
 void				ft_map_init(t_parse *p);
 int					ft_run_game(t_data *data);
-
-int					ft_free_img(t_data *data);
-int					ft_free_img2(t_data *data, char *s);
-void				ft_free_parse(t_parse *p, char *s, int y);
-void				ft_free_sprite(t_parse *p, char *s, int i);
-
+int					ft_free_img(t_data *data, int x);
+int					ft_free_img2(t_data *data, char *s, int x);
+void				ft_free_parse(t_parse *p, char *s, int y, int x);
+void				ft_free_sprite(t_parse *p, char *s, int i, int x);
 int					ft_raycast(t_data *data);
-
 t_parse				ft_parse(char *file);
 void				ft_init_parse(t_parse *p, char *file);
 void				ft_read(t_parse *p);
-
 int					ft_xlen(char *s);
 void				ft_int_to_char(unsigned char *str, int x);
 void				my_mlx_pixel_put(t_img *img, int x, int y, int color);
-
 void				ft_sprite_init(t_parse *p);
 int					ft_sprite_init2(t_parse *p, char *line, int y, int i);
 void				ft_sprite_sort(t_data *data);
 int					ft_sprite_sort2(t_data *data, double *spritedistance);
-
 void				ft_fill_r(t_parse *p);
 void				ft_fill_path(t_parse *p);
 void				ft_fill_color(t_parse *p);
-
 void				ft_bmp(t_data *d, t_img *img);
-
 void				ft_move(t_data *d);
 void				ft_move2(t_data *d);
 void				ft_move3(t_data *d);
 int					ft_key_search(t_data *d);
-
 void				ft_sprite(t_data *data, t_img *i, double *zbuffer);
-
 void				ft_texture(t_ray *r, t_data *d, t_img *i, int x);
-
+void				ft_flood(t_parse *p, int x, int y);
 int					get_next_line(int fd, char **line);
 int					ft_cpy(char **line, char **str, int fd);
 int					ft_strcheck(char *str);

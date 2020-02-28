@@ -6,7 +6,7 @@
 /*   By: novan-ve <novan-ve@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/08 12:27:14 by novan-ve       #+#    #+#                */
-/*   Updated: 2020/02/08 15:00:10 by novan-ve      ########   odam.nl         */
+/*   Updated: 2020/02/10 13:54:36 by novan-ve      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 int		ft_key_press(int keycode, t_data *d)
 {
 	if (keycode == KEY_ESC)
-		ft_free_img(d);
+		ft_free_img(d, 0);
 	if (keycode == KEY_RIGHT)
 		d->keys->key_right = 1;
 	if (keycode == KEY_LEFT)

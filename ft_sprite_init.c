@@ -6,7 +6,7 @@
 /*   By: novan-ve <novan-ve@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/01/27 11:17:26 by novan-ve       #+#    #+#                */
-/*   Updated: 2020/02/08 14:21:43 by novan-ve      ########   odam.nl         */
+/*   Updated: 2020/02/10 13:58:59 by novan-ve      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ int		ft_sprite_init2(t_parse *p, char *line, int y, int i)
 		{
 			p->spmap[i] = (int*)malloc(sizeof(int) * 2);
 			if (!p->spmap[i])
-				ft_free_sprite(p, "Spmap[i] malloc fail", i);
+				ft_free_sprite(p, "Spmap[i] malloc fail", i, 1);
 			p->spmap[i][0] = y;
 			p->spmap[i][1] = x;
 			i++;
@@ -95,7 +95,7 @@ void	ft_sprite_init(t_parse *p)
 	check = 1;
 	p->spmap = (int**)malloc(sizeof(int*) * p->isprite);
 	if (!p->spmap)
-		ft_free_parse(p, "Sprite malloc fail", p->map_y - 1);
+		ft_free_parse(p, "Sprite malloc fail", p->map_y - 1, 1);
 	while (check > 0)
 	{
 		check = get_next_line(p->fd, &line);

@@ -6,11 +6,11 @@
 /*   By: novan-ve <marvin@codam.nl>                   +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2019/11/27 14:15:45 by novan-ve       #+#    #+#                */
-/*   Updated: 2020/01/23 15:38:24 by novan-ve      ########   odam.nl         */
+/*   Updated: 2020/02/10 12:01:11 by novan-ve      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "cub3d.h"
 
 int		ft_cpy(char **line, char **str, int fd)
 {

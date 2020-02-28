@@ -6,7 +6,7 @@
 /*   By: novan-ve <novan-ve@student.codam.nl>         +#+                     */
 /*                                                   +#+                      */
 /*   Created: 2020/02/08 14:39:06 by novan-ve       #+#    #+#                */
-/*   Updated: 2020/02/08 14:59:52 by novan-ve      ########   odam.nl         */
+/*   Updated: 2020/02/10 13:55:47 by novan-ve      ########   odam.nl         */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void	ft_close_bmp(t_data *data, int file)
 {
 	close(file);
-	ft_free_img2(data, "Error writing screenshot");
+	ft_free_img2(data, "Error writing screenshot", 1);
 }
 
 void	ft_bmp_header(t_data *data, int file, int filesize)
@@ -43,7 +43,7 @@ void	ft_bmp_header(t_data *data, int file, int filesize)
 	if (check == -1)
 	{
 		close(file);
-		ft_free_img2(data, "Error writing screenshot header");
+		ft_free_img2(data, "Error writing screenshot header", 1);
 	}
 }
 
@@ -85,7 +85,7 @@ void	ft_bmp(t_data *data, t_img *i)
 
 	file = open("screenshot.bmp", O_WRONLY | O_CREAT, 0644);
 	if (file < 0)
-		ft_free_img2(data, "Error creating screenshot file");
+		ft_free_img2(data, "Error creating screenshot file", 1);
 	check = 0;
 	padsize = (4 - ((int)data->p->width * 3) % 4) % 4;
 	fsize = 54 + (3 * ((int)data->p->width + padsize) * (int)data->p->height);
@@ -93,5 +93,5 @@ void	ft_bmp(t_data *data, t_img *i)
 	ft_bmp_fill(data, i, file, padsize);
 	close(file);
 	mlx_destroy_image(data->r->mlx, i->img);
-	ft_free_img(data);
+	ft_free_img(data, 1);
 }
